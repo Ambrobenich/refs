@@ -94,7 +94,6 @@ dialog::backdrop{background:transparent}
 .lb{display:grid;grid-template-columns:minmax(0,1fr) 340px;grid-template-rows:auto minmax(0,1fr);grid-template-areas:"stage bar" "stage info";height:100%}
 .lbbar{grid-area:bar;background:var(--bg);display:flex;align-items:center;gap:6px;padding:16px 18px 10px;border-bottom:1px solid var(--line)}
 .lbbar .sp{flex:1}
-#pos{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums;padding-left:4px}
 .nav{position:fixed;top:50%;transform:translateY(-50%);z-index:3;width:36px;height:36px;border:0;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .15s,opacity .15s}
 .nav:hover{background:rgba(255,255,255,.24)}
 .nav:disabled{opacity:0;pointer-events:none}
@@ -118,7 +117,7 @@ dialog::backdrop{background:transparent}
 .pal button{border:0;background:transparent;padding:0;display:flex;flex-direction:column;gap:4px;align-items:center;font:12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--muted)}
 .pal button i{width:44px;height:44px;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
 .lb .txt{white-space:pre-wrap;color:var(--muted);font-size:14px;margin:0}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:10;background:#fff;color:#0e0e10;box-shadow:0 8px 30px rgba(0,0,0,.35);font-weight:500;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
 .toast.on{opacity:1}
 @media (max-width:860px){
   .bar{padding:10px 16px;gap:10px}
@@ -167,7 +166,6 @@ dialog::backdrop{background:transparent}
 <dialog id="lb" aria-label="Просмотр рефа">
   <div class="lb">
     <div class="lbbar">
-      <span id="pos" aria-live="polite"></span>
       <span class="sp"></span>
       <button class="ibtn" id="close" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
@@ -325,7 +323,6 @@ function show(i){
   const img=$('#lbImg'); img.src=`images/${it.f}.jpg`; img.width=it.w; img.height=it.h; img.alt=`${PL[it.p]}: ${it.b.map(x=>label('blocks',x)).join(', ')||'реф'}`;
   // очень длинные скрины листаются; остальные по центру и целиком в экране
   $('#stage').classList.toggle('tall',it.h/it.w>2.4); $('#stage').scrollTop=0;
-  $('#pos').textContent=`${(i+1).toLocaleString('ru-RU')} / ${LIST.length.toLocaleString('ru-RU')}`;
   const chip=(k,voc,x)=>`<button type="button" data-k="${k}" data-v="${x}">${label(voc,x)}</button>`;
   const grp=(t,k,voc,arr)=>arr.length?`<div><h3>${t}</h3><div class="chips">${arr.map(x=>chip(k,voc,x)).join('')}</div></div>`:'';
   $('#side').innerHTML=`${grp('Блоки','b','blocks',it.b)}${grp('Компоненты','c','components',it.c)}${grp('Стиль','s','style',it.s)}${grp('Тематика','d','domain',it.d)}${grp('Цвет','col','color',it.col)}
@@ -365,7 +362,8 @@ document.addEventListener('keydown',e=>{
   if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();$('#q').focus();}
 });
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-let tt; function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1400);}
+// пока открыт просмотр, тост живёт внутри окна (иначе его закрывает затемнение)
+let tt; function toast(t){const el=$('#toast'); const host=lb.open?lb:document.body; if(el.parentNode!==host)host.appendChild(el);el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1400);}
 addEventListener('hashchange',()=>{ if(hashLock)return; readHash(); $('#q').value=S.q; update(); openFromHash(); });
 function openFromHash(){ if(!S.open)return; const i=LIST.findIndex(it=>it.f===S.open); if(i>=0)openLb(i); }
 readHash(); $('#q').value=S.q; update(); openFromHash();
