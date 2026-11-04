@@ -1,0 +1,8 @@
+# Публикуется только сайт: страница, данные, превью, картинки
+/*
+!/index.html
+!/refs-data.js
+!/thumbs/
+!/images/
+!/.nojekyll
+!/.gitignore
