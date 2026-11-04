@@ -38,6 +38,9 @@ html.is-dark .tbtn .sun{display:block}html.is-dark .tbtn .moon{display:none}
 .copy:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(0,0,0,.3)}
 .copy:active{transform:none}
 .copy svg{width:17px;height:17px}
+/* у поля поиска свой крестик — встроенный браузерный прячем */
+.search input::-webkit-search-cancel-button,.search input::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+.search input::-ms-clear{display:none}
 .search .clear{position:absolute;right:6px;top:6px;width:32px;height:32px;border:0;border-radius:8px;background:transparent;color:var(--muted);display:none}
 .search.has .clear{display:block}
 .filters{max-width:1720px;margin:0 auto;padding:0 24px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
